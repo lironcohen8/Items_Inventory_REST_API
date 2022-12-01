@@ -1,0 +1,35 @@
+from flask import Flask, Response, request
+from .data.seed import items
+from .models.item import Item
+
+app = Flask("app",
+            static_url_path='', 
+            static_folder='web')
+
+
+@app.route('/')
+def root():
+    return app.send_static_file('index.html')
+
+
+@app.route("/items")
+def get_items():
+    return Response(str(items), content_type="application/json")
+
+
+@app.route('/items', methods=["POST"])
+def add_items():
+    body = request.get_json()
+    name = body["name"]
+    item = Item(name)
+    items.append(item)
+    return Response(str(item), content_type="application/json")
+
+
+@app.route('/items/<id>', methods=["DELETE"])
+def delete_item(id):
+        if (id in items):
+            items.remove(id)
+        else:
+            return "", 400
+        return "",200
